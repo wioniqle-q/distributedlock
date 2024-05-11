@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedLock", "DistributedLock\DistributedLock.csproj", "{D08D054B-6372-4F4D-B85A-5C8E421FBC34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistributedLockExample", "DistributedLockExample\DistributedLockExample.csproj", "{9F0AA778-6ECA-49D0-9FCF-6CD9561AF194}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D08D054B-6372-4F4D-B85A-5C8E421FBC34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D08D054B-6372-4F4D-B85A-5C8E421FBC34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D08D054B-6372-4F4D-B85A-5C8E421FBC34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D08D054B-6372-4F4D-B85A-5C8E421FBC34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F0AA778-6ECA-49D0-9FCF-6CD9561AF194}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F0AA778-6ECA-49D0-9FCF-6CD9561AF194}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F0AA778-6ECA-49D0-9FCF-6CD9561AF194}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F0AA778-6ECA-49D0-9FCF-6CD9561AF194}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
