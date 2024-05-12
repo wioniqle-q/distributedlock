@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+using System.Collections.Concurrent;
 using System.Net.Sockets;
 using System.Text;
 using DistributedLock.Abstracts;
@@ -11,7 +11,8 @@ public sealed class CommunicationManager : CommunicationManagerAbstract
 {
     private readonly ConcurrentDictionary<int, TcpClient> _clients = new();
     private readonly SemaphoreSlim _clientsSemaphore = new(1, 3_000_000);
-
+    private const int BufferSize = 1024; 
+    
     private CommunicationManager()
     {
     }
@@ -88,29 +89,46 @@ public sealed class CommunicationManager : CommunicationManagerAbstract
         var prepareMessage = EncodeMessage(CommunicationMessageType.Prepare, transactionId);
         stream.Write(rollbackMessage, 0, prepareMessage.Length);
     }
-
+    
     private static byte[] EncodeMessage(CommunicationMessageType communicationMessageType, long transactionId)
     {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
+        var buffer = new byte[9];
+        buffer[0] = (byte)communicationMessageType;
+    
+        Span<byte> transactionIdBytes = stackalloc byte[8];
+        BitConverter.TryWriteBytes(transactionIdBytes, transactionId);
+        transactionIdBytes.CopyTo(buffer.AsSpan(1));
 
-        writer.Write((byte)communicationMessageType);
-        writer.Write(transactionId);
-        return stream.ToArray();
+        return buffer;
     }
-
+    
     private static byte[] ReadResponse(NetworkStream stream)
     {
-        using var memoryStream = new MemoryStream();
-        var buffer = new byte[1024];
-        int bytesRead;
+        var buffer = new byte[BufferSize];
+        var totalBytesRead = 0;
+        var bufferSize = BufferSize;
 
-        while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
-            memoryStream.Write(buffer, 0, bytesRead);
+        do
+        {
+            var bytesRead = stream.Read(buffer, totalBytesRead, bufferSize - totalBytesRead);
+            if (bytesRead is 0)
+                break;
 
-        return memoryStream.ToArray();
+            totalBytesRead += bytesRead;
+            
+            if (totalBytesRead != bufferSize) continue;
+            bufferSize *= 2; 
+            
+            var newBuffer = new byte[bufferSize];
+            
+            buffer.AsSpan(0, totalBytesRead).CopyTo(newBuffer);
+            buffer = newBuffer;
+        }
+        while (true);
+
+        return buffer.AsSpan(0, totalBytesRead).ToArray();
     }
-
+    
     private static VoteResult DecodeVoteResult(byte[] response)
     {
         var vote = response[0] is 1;
